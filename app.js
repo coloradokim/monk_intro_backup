@@ -1,6 +1,6 @@
 var http = require('http'),
     router = require('./router'),
-    url = require('url')
+    url = require('url');
 
 var server = http.createServer(function (req, res) {
   if (req.url === '/favicon.ico') {
