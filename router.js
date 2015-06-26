@@ -1,21 +1,29 @@
-var routes = require('routes')(),
+var routes = require('routes') (),
     fs = require('fs'),
-    // Configure Monk Driver in the router
-    db = require('monk')('localhost/music'),
+    db = require('monk') ('localhost/music'),
     bands = db.get('bands');
 
-routes.addRoute('/bands', function(req, res, url) {
+routes.addRoute('/bands', function (req, res, url) {
   res.setHeader('Content-Type', 'text/html')
   if (req.method === 'GET') {
-    var template = ''
-    bands.find({}, function(err, docs) {
-      console.log(docs);
-      if (err) res.end('Broken')
-      docs.forEach(function(band){
-        template += '<h2>' + band.name + '</h2>'
-      })
-      res.end(template)
+
+  var template = ''
+  bands.find({}, function(err, docs) {
+    if (err) throw err
+    docs.forEach(function(doc) {
+      template += '<h2><a href="/bands/' + doc._id + ' ">' + doc.name + '</a></h2>'
+    })
+    res.end(template)
     })
   }
 })
-module.exports = routes
+    routes.addRoute('/bands/:id', function (req, res, url) {
+      if (req.method === 'GET') {
+        bands.findOne({_id: url.params.id}, function (err, doc) {
+          if (err) throw err
+          res.end(doc.name)
+        })
+      }
+    })
+
+    module.exports = routes
